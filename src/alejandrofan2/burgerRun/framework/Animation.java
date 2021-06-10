@@ -1,4 +1,4 @@
-package alejandrofan2.burgerRun.objects;
+package alejandrofan2.burgerRun.framework;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;

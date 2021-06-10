@@ -1,5 +1,6 @@
-package alejandrofan2.BurgerRun.main;
+package alejandrofan2.burgerRun.window;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -11,6 +12,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -23,24 +25,28 @@ import javax.swing.Timer;
 import alejandrofan2.BurgerRun.shapes.Rectangle;
 import alejandrofan2.BurgerRun.shapes.ShapeContainer;
 import alejandrofan2.BurgerRun.shapes.Square;
+import alejandrofan2.burgerRun.framework.objects.Obstacle;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends Canvas implements Runnable {
 
 	// constants
+	private static final long serialVersionUID = 3367166757979631248L;
 	public static final int BASEY = 250;
 	public static final int MINGAP = 170;
 	public static final int MAXGAP = 340;
 	
+	private boolean running = false;
+	private Thread thread;
+	
 	// properties
 	private ShapeContainer obstacles;
 	private Timer obstacleTimer, runnerTimer, jumpTimer;
-	private static int randomGap = (int) ( Math.random() * (MAXGAP - MINGAP)) + MINGAP;
+	private static int randomGap = (int) (Math.random() * (MAXGAP - MINGAP)) + MINGAP;
 	private ArrayList<Image> runnerGif;
-	private int index;
+	private int index = 1;
 	private int heightOfJump;
 	private boolean flag;
 	private static int jumpCount = 0;
-	private JLabel scoreLabel;
 	private int score;
 	private Rectangle border;
 	private boolean isGameOver;
@@ -50,24 +56,97 @@ public class GamePanel extends JPanel {
 	// constructors
 	public GamePanel() {
 		
-		setPreferredSize( new Dimension( 800, 300));
 		setFocusable(true);
+//		
+//		init();
+//		this.addMouseListener( new JumpMouseListener());
+//		this.addKeyListener( new JumpKeyListener());
+//		
+	}
+	
+	public synchronized void start() {
+		if (running) {
+			return;
+		}
 		
-		scoreLabel = new JLabel();
+		running = true;
+		thread = new Thread(this);
+		thread.start();
+	}
+	
+	@Override
+	public void run() {
+		System.out.println("Inside: " + Thread.currentThread().getName());
 		
-		init();
-		add(scoreLabel);
+		long lastTime = System.nanoTime();
+		double tps = 60;
+		double ns = 1000000000 / tps;
+		double delta = 0;
+		long timer = System.currentTimeMillis();
+		int updates = 0;
+		int frames = 0;
+		while (running) {
+			long now = System.nanoTime();
+			delta += (now - lastTime) / ns;
+			lastTime = now;
+			while (delta >= 1) {
+				tick();
+				updates++;
+				delta--;
+			}
+			render();
+			frames++;
+			
+			if (System.currentTimeMillis() - timer > 1000) {
+				timer += 1000;
+				System.out.println("FPS: " + frames + " TPS: " + updates);
+				frames = 0;
+				updates = 0;
+			}
+		}
+	}
+	
+	private void tick() {
 		
-		this.addMouseListener( new JumpMouseListener());
-		this.addKeyListener( new JumpKeyListener());
+	}
+	
+	private void render() {
+		BufferStrategy bs = this.getBufferStrategy();
+		if (bs == null) {
+			this.createBufferStrategy(3);
+			return;
+		}
 		
+		Graphics g = bs.getDrawGraphics();
+		////////////////
+		//Draw zone
+//		setBackground(Color.BLACK);
+//		Graphics2D g2 = (Graphics2D) g;
+//		
+//	//	g2.drawString( "by Yalchin", this.getWidth()-100, 20);
+//		
+//		
+//		
+//		g2.drawImage(runnerGif.get(index), 30, BASEY - 80 - heightOfJump, 80, 80, this);
+//	//	g2.drawRect( 50, BASEY - 80 - heightOfJump, 40, 70);
+//		
+//		g2.fillRect(0, BASEY, getWidth(), 8);
+//		border.setLocation(50, BASEY - 80 - heightOfJump);
+//		
+//		Iterator i = obstacles.iterator();
+//		while( i.hasNext()) {
+//			( (Obstacle) i.next() ).draw(g2);
+//		}
+		////////////////
+		g.dispose();
+		bs.show();
 		
 	}
 
 	private void init() {
 		
 		score = 0;
-		scoreLabel.setText( "Score: " + score);
+		System.out.println("Score: " + score);
 		
 		obstacleSpeed = 6;
 		index = 0;
@@ -97,29 +176,6 @@ public class GamePanel extends JPanel {
 		
 	}
 	
-	public void paintComponent( Graphics g) {
-		super.paintComponent(g);
-		setBackground( Color.WHITE);
-		Graphics2D g2 = ( Graphics2D) g;
-		
-	//	g2.drawString( "by Yalchin", this.getWidth()-100, 20);
-		
-		
-		
-		g2.drawImage( runnerGif.get( index), 30, BASEY - 80 - heightOfJump, 80, 80, this);
-	//	g2.drawRect( 50, BASEY - 80 - heightOfJump, 40, 70);
-		
-		g2.fillRect(0, BASEY, getWidth(), 8);
-		border.setLocation(50, BASEY - 80 - heightOfJump);
-		
-		Iterator i = obstacles.iterator();
-		while( i.hasNext()) {
-			( (Obstacle) i.next() ).draw(g2);
-		}
-		
-		
-	}
-	
 	class TimerActionListener implements ActionListener {
 		public void actionPerformed( ActionEvent e) {
 			
@@ -140,7 +196,7 @@ public class GamePanel extends JPanel {
 				randomGap = (int) ( Math.random() * (MAXGAP - MINGAP)) + MINGAP;
 				
 				score++;
-				scoreLabel.setText( "Score: " + score);
+				System.out.println("Score: " + score);
 			}
 		    
 			obstacles.remove();
@@ -155,14 +211,24 @@ public class GamePanel extends JPanel {
 			if ( isGameOver) {
 				
 				runnerTimer.stop();
-				runnerTimer.removeActionListener( runnerTimer.getActionListeners()[0]);
+				try {
+					runnerTimer.removeActionListener(runnerTimer.getActionListeners()[0]);
+				} catch (Exception e2) {
+					System.err.println("Error removing the runner listener");
+				}
 				obstacleTimer.stop();
-				obstacleTimer.removeActionListener( obstacleTimer.getActionListeners()[0]);
+				try {
+					obstacleTimer.removeActionListener( obstacleTimer.getActionListeners()[0]);
+				} catch (Exception e2) {
+					System.err.println("Error removing the timer listener");
+				}
 				jumpTimer.stop();
-				if ( jumpTimer.getActionListeners()[0] != null)
-					jumpTimer.removeActionListener( jumpTimer.getActionListeners()[0]);
+				if ( jumpTimer.getActionListeners()[0] != null) {
+					jumpTimer.removeActionListener(jumpTimer.getActionListeners()[0]);
+				}
+
 				
-				int confirm = JOptionPane.showConfirmDialog(null, scoreLabel.getText() + "\n" + "Play again?", "Game Over!", 0);
+				int confirm = JOptionPane.showConfirmDialog(null, "Score: " + score + "\n" + "Play again?", "Game Over!", 0);
 				if ( confirm == 0)
 					init();
 				else
@@ -173,6 +239,8 @@ public class GamePanel extends JPanel {
 			repaint();
 		}
 	}
+	
+	
 	
 	class RunnerActionListener implements ActionListener {
 		public void actionPerformed( ActionEvent e) {
@@ -205,13 +273,13 @@ public class GamePanel extends JPanel {
 				flag = true;
 			}
 			
-			if ( flag) {
+			if (flag) {
 				jumpCount--;
 				if ( jumpCount == 0) {
 					jumpTimer.stop();
 					flag = false;
 					score += 2;
-					scoreLabel.setText( "Score: " + score);
+					System.out.println("Score: " + score);
 				}
 			}
 			else {
@@ -249,5 +317,11 @@ public class GamePanel extends JPanel {
 				}
 			}
 		}
+	}
+
+	public void setPreferredSize(int weight, int height) {
+		setPreferredSize(new Dimension(weight, height));
+		setMaximumSize(new Dimension(weight, height));
+		setMinimumSize(new Dimension(weight, height));
 	}
 }

@@ -1,16 +1,11 @@
-package alejandrofan2.BurgerRun.main;
+package alejandrofan2.burgerRun.framework.objects;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
 import alejandrofan2.BurgerRun.shapes.Drawable;
 import alejandrofan2.BurgerRun.shapes.Square;
-/**
- * 
- * @author Yalchin ALIYEV
- * @version 1.0 26.03.2016
- *
- */
+
 public class Obstacle extends Square implements Drawable{
 
 	private int R, G, B;

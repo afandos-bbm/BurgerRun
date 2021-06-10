@@ -1,4 +1,4 @@
-package alejandrofan2.burgerRun.textureManager;
+package alejandrofan2.burgerRun.framework.textureManager;
 
 import java.awt.image.BufferedImage;
 
