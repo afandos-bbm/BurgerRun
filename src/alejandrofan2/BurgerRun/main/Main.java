@@ -6,6 +6,6 @@ import alejandrofan2.burgerRun.window.MainFrame;
 public class Main {
 	
 	public static void main( String[] args) {
-		new MainFrame(800, 300, "BurgerRun", new GamePanel());
+		new MainFrame(800, 400, "BurgerRun", new GamePanel());
 	}
 }
