@@ -30,8 +30,9 @@ public class GamePanel extends Canvas implements Runnable {
 
 	public static int WIDTH, HEIGHT;
 
-	private BufferedImage level, clouds;
-	private final Integer NCLOUDS = 5;
+	private BufferedImage level, clouds, doubleClouds;
+	private final Integer NCLOUDS = 15;
+	private int[][] cloudsPos;
 
 	private boolean win = false;
 
@@ -88,11 +89,13 @@ public class GamePanel extends Canvas implements Runnable {
 
 		BufferedImageLoader loader = new BufferedImageLoader();
 		level = loader.loadImage("/lvl1.png");
-		// clouds = loader.loadImage("/clouds.png");
+		clouds = loader.loadImage("/cloud.png");
+		doubleClouds = loader.loadImage("/doubleCloud.png");
 
 		camera = new Camera(0, 0, WIDTH, HEIGHT);
 		handler = new Handler();
 		loadImageLevel(level);
+		cloudsPos = addClouds();
 
 		this.addKeyListener(new KeyListener(handler));
 	}
@@ -126,9 +129,20 @@ public class GamePanel extends Canvas implements Runnable {
 
 		g2d.translate(camera.getX(), camera.getY());
 
-//		for (int i = 0; i < clouds.getWidth() * NCLOUDS; i++) {
-//			g.drawImage(clouds, i, 50, this);
-//		}
+		int count = 0;
+		for (int i = 600; i < clouds.getWidth() * NCLOUDS; i += 250) {
+			i += cloudsPos[1][count];
+			if (cloudsPos[2][count] >= 1) {
+				g.drawImage(clouds, i, cloudsPos[0][count], 110, 70, this);
+			} else
+				g.drawImage(doubleClouds, i, cloudsPos[0][count], 220, 150, this);
+
+			if (count == NCLOUDS - 1) {
+				break;
+			}
+			count++;
+
+		}
 		handler.render(g, camera);
 
 		g2d.translate(-camera.getX(), -camera.getY());
@@ -136,6 +150,23 @@ public class GamePanel extends Canvas implements Runnable {
 		g.dispose();
 		bs.show();
 
+	}
+
+	private int[][] addClouds() {
+		cloudsPos = new int[3][NCLOUDS];
+		for (int i = 0; i < NCLOUDS; i++) {
+			double random = (35 + (Math.random() * 150));
+			cloudsPos[0][i] = (int) random;
+		}
+		for (int i = 0; i < NCLOUDS; i++) {
+			double random = (Math.random() * 300);
+			cloudsPos[1][i] = (int) random;
+		}
+		for (int i = 0; i < NCLOUDS; i++) {
+			double random = (Math.random() * 3);
+			cloudsPos[2][i] = (int) random;
+		}
+		return cloudsPos;
 	}
 
 	public void setPreferredSize(int weight, int height) {
