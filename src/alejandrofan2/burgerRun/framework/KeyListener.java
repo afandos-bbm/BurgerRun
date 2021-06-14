@@ -1,22 +1,23 @@
-package alejandrofan2.burgerRun.framework;
+package alejandrofan2.BurgerRun.framework;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class KeyListener extends KeyAdapter {
-	
+
 	Handler handler;
-	
+
 	public KeyListener(Handler handler) {
 		this.handler = handler;
 	}
-	
+
+	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		
+
 		for (int i = 0; i < handler.objects.size(); i++) {
 			GameObject workingObject = handler.objects.get(i);
-			
+
 			if (workingObject.getId() == ObjectId.Player) {
 				if (key == KeyEvent.VK_D) {
 					workingObject.setVelX(5);
@@ -31,13 +32,14 @@ public class KeyListener extends KeyAdapter {
 			}
 		}
 	}
-	
+
+	@Override
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
-		
+
 		for (int i = 0; i < handler.objects.size(); i++) {
 			GameObject workingObject = handler.objects.get(i);
-			
+
 			if (workingObject.getId() == ObjectId.Player) {
 				if (key == KeyEvent.VK_D) {
 					workingObject.setVelX(0);

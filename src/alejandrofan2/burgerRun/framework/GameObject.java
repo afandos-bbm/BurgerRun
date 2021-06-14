@@ -1,4 +1,4 @@
-package alejandrofan2.burgerRun.framework;
+package alejandrofan2.BurgerRun.framework;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -11,16 +11,17 @@ public abstract class GameObject {
 	protected float velX, velY;
 	protected boolean falling = true;
 	protected boolean jumping = false;
-	
-	
+
 	public GameObject(float x, float y, ObjectId id) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public abstract void tick(LinkedList<GameObject> object);
+
 	public abstract void render(Graphics g);
+
 	public abstract Rectangle getBounds();
 
 	public float getX() {
@@ -74,6 +75,5 @@ public abstract class GameObject {
 	public void setJumping(boolean jumping) {
 		this.jumping = jumping;
 	}
-	
-	
+
 }

@@ -1,7 +1,6 @@
-package alejandrofan2.burgerRun.framework;
+package alejandrofan2.BurgerRun.framework;
 
 public enum ObjectId {
-	
-	Player(), 
-	Block();
+
+	Player(), Block();
 }

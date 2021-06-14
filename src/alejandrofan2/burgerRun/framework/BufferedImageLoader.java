@@ -1,13 +1,13 @@
-package alejandrofan2.burgerRun.framework;
+package alejandrofan2.BurgerRun.framework;
 
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
 public class BufferedImageLoader {
-	
+
 	private BufferedImage image;
-	
+
 	public BufferedImage loadImage(String path) {
 		try {
 			image = ImageIO.read(getClass().getResource(path));

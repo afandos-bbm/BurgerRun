@@ -1,20 +1,28 @@
-package alejandrofan2.burgerRun.window;
+package alejandrofan2.BurgerRun.window;
 
-import alejandrofan2.burgerRun.framework.GameObject;
+import java.awt.Rectangle;
+
+import alejandrofan2.BurgerRun.framework.GameObject;
 
 public class Camera {
-	
+
 	private float x, y;
-	
-	public Camera(float x, float y) {
+	private final int WIDTH, HEIGHT;
+
+	public Camera(float x, float y, int width, int height) {
 		this.x = x;
 		this.y = y;
+		this.WIDTH = width;
+		this.HEIGHT = height;
 	}
-	
+
+	public Rectangle getViewBounds() {
+		return new Rectangle(-(int) x, -(int) y, WIDTH, HEIGHT);
+	}
+
 	public void tick(GameObject player) {
-		 x = - player.getX() + 128;
+		x = -player.getX() + 128;
 	}
-	
 
 	public float getX() {
 		return x;
