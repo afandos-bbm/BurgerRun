@@ -6,9 +6,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+
+import alejandrofan2.burgerRun.framework.BufferedImageLoader;
 import alejandrofan2.burgerRun.framework.Handler;
 import alejandrofan2.burgerRun.framework.KeyListener;
 import alejandrofan2.burgerRun.framework.ObjectId;
+import alejandrofan2.burgerRun.framework.objects.Block;
 import alejandrofan2.burgerRun.framework.objects.Player;
 
 public class GamePanel extends Canvas implements Runnable {
@@ -22,6 +26,9 @@ public class GamePanel extends Canvas implements Runnable {
 	private Camera camera;
 	
 	public static int WIDTH, HEIGHT;
+	
+	private BufferedImage level, clouds;
+	private final Integer NCLOUDS = 5;
 	
 	public synchronized void start() {
 		if (running) {
@@ -71,6 +78,11 @@ public class GamePanel extends Canvas implements Runnable {
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
 		
+		BufferedImageLoader loader = new BufferedImageLoader();
+		//level =  loader.loadImage("/level.jpg");
+		//clouds = loader.loadImage("/clouds.png");
+		//loadImageLevel(level);
+		
 		camera = new Camera(0, 0);
 		handler = new Handler();
 		handler.addObject(new Player(100, 100, ObjectId.Player, handler));
@@ -99,12 +111,14 @@ public class GamePanel extends Canvas implements Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		////////////////
 		//Draw zone
-		g.setColor(Color.white);
+		g.setColor(new Color(151, 181, 252));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		
 		g2d.translate(camera.getX(), camera.getY());
 
-		
+//		for (int i = 0; i < clouds.getWidth() * NCLOUDS; i++) {
+//			g.drawImage(clouds, i, 50, this);
+//		}
 		handler.render(g);
 		
 		g2d.translate(-camera.getX(), -camera.getY());
@@ -118,5 +132,23 @@ public class GamePanel extends Canvas implements Runnable {
 		setPreferredSize(new Dimension(weight, height));
 		setMaximumSize(new Dimension(weight, height));
 		setMinimumSize(new Dimension(weight, height));
+	}
+	
+	private void loadImageLevel(BufferedImage image) {
+		int w = image.getWidth();
+		int h = image.getHeight();
+		
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				int pixel = image.getRGB(i, j);
+				int red = (pixel >> 16) & 0xff;
+				int blue = pixel & 0xff;
+				int green = (pixel >> 8) & 0xff;
+				
+				if (red == 255 && blue == 255 && green == 255) { // White pixel
+					handler.addObject(new Block(i*32, j*32, ObjectId.Block));
+				}
+			}
+		}
 	}
 }
