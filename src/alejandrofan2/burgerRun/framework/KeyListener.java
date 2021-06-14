@@ -1,4 +1,4 @@
-package alejandrofan2.BurgerRun.framework;
+package alejandrofan2.burgerRun.framework;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

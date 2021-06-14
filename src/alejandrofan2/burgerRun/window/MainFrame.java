@@ -1,4 +1,4 @@
-package alejandrofan2.BurgerRun.window;
+package alejandrofan2.burgerRun.window;
 
 import javax.swing.JFrame;
 

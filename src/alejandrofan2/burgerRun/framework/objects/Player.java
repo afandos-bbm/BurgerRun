@@ -1,4 +1,4 @@
-package alejandrofan2.BurgerRun.framework.objects;
+package alejandrofan2.burgerRun.framework.objects;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,22 +6,25 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.LinkedList;
 
-import alejandrofan2.BurgerRun.framework.GameObject;
-import alejandrofan2.BurgerRun.framework.Handler;
-import alejandrofan2.BurgerRun.framework.ObjectId;
+import alejandrofan2.burgerRun.framework.GameObject;
+import alejandrofan2.burgerRun.framework.Handler;
+import alejandrofan2.burgerRun.framework.ObjectId;
+import alejandrofan2.burgerRun.window.GamePanel;
 
 public class Player extends GameObject {
 
 	private Handler handler;
+	private GamePanel game;
 
 	private float width = 32, height = 64;
 	private final float MAX_SPEED = 15;
 
 	private float gravity = 0.09f;
 
-	public Player(float x, float y, ObjectId id, Handler handler) {
+	public Player(float x, float y, ObjectId id, Handler handler, GamePanel game) {
 		super(x, y, id);
 		this.handler = handler;
+		this.game = game;
 	}
 
 	@Override
@@ -82,6 +85,12 @@ public class Player extends GameObject {
 				// Left
 				if (getBoundsLeft().intersects(workingObject.getBounds())) {
 					x = workingObject.getX() + 35;
+				}
+			}
+
+			if (workingObject.getId() == ObjectId.WinZone) {
+				if (getBounds().intersects(workingObject.getBounds())) {
+					game.setWin(true);
 				}
 			}
 		}

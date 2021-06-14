@@ -1,8 +1,8 @@
-package alejandrofan2.BurgerRun.window;
+package alejandrofan2.burgerRun.window;
 
 import java.awt.Rectangle;
 
-import alejandrofan2.BurgerRun.framework.GameObject;
+import alejandrofan2.burgerRun.framework.GameObject;
 
 public class Camera {
 

@@ -1,4 +1,4 @@
-package alejandrofan2.BurgerRun.window;
+package alejandrofan2.burgerRun.window;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -8,12 +8,15 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
-import alejandrofan2.BurgerRun.framework.BufferedImageLoader;
-import alejandrofan2.BurgerRun.framework.Handler;
-import alejandrofan2.BurgerRun.framework.KeyListener;
-import alejandrofan2.BurgerRun.framework.ObjectId;
-import alejandrofan2.BurgerRun.framework.objects.Block;
-import alejandrofan2.BurgerRun.framework.objects.Player;
+import alejandrofan2.burgerRun.framework.BufferedImageLoader;
+import alejandrofan2.burgerRun.framework.Handler;
+import alejandrofan2.burgerRun.framework.KeyListener;
+import alejandrofan2.burgerRun.framework.ObjectId;
+import alejandrofan2.burgerRun.framework.objects.BrickBlock;
+import alejandrofan2.burgerRun.framework.objects.FloorBlock;
+import alejandrofan2.burgerRun.framework.objects.InvisibleBlock;
+import alejandrofan2.burgerRun.framework.objects.Player;
+import alejandrofan2.burgerRun.framework.objects.WinZone;
 
 public class GamePanel extends Canvas implements Runnable {
 
@@ -29,6 +32,8 @@ public class GamePanel extends Canvas implements Runnable {
 
 	private BufferedImage level, clouds;
 	private final Integer NCLOUDS = 5;
+
+	private boolean win = false;
 
 	public synchronized void start() {
 		if (running) {
@@ -71,6 +76,9 @@ public class GamePanel extends Canvas implements Runnable {
 				frames = 0;
 				updates = 0;
 			}
+			if (win) {
+				win();
+			}
 		}
 	}
 
@@ -79,16 +87,18 @@ public class GamePanel extends Canvas implements Runnable {
 		HEIGHT = getHeight();
 
 		BufferedImageLoader loader = new BufferedImageLoader();
-		// level = loader.loadImage("/level.jpg");
+		level = loader.loadImage("/lvl1.png");
 		// clouds = loader.loadImage("/clouds.png");
-		// loadImageLevel(level);
 
 		camera = new Camera(0, 0, WIDTH, HEIGHT);
 		handler = new Handler();
-		handler.addObject(new Player(100, 100, ObjectId.Player, handler));
-		handler.createLevel();
+		loadImageLevel(level);
 
 		this.addKeyListener(new KeyListener(handler));
+	}
+
+	private void win() {
+		running = false;
 	}
 
 	private void tick() {
@@ -138,15 +148,34 @@ public class GamePanel extends Canvas implements Runnable {
 		int w = image.getWidth();
 		int h = image.getHeight();
 
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				int pixel = image.getRGB(i, j);
-				int red = (pixel >> 16) & 0xff;
-				int blue = pixel & 0xff;
-				int green = (pixel >> 8) & 0xff;
+		for (int i = 0; i < h / 2; i++) {
+			for (int j = 0; j < w / 2; j++) {
+				Color pixel = new Color(image.getRGB(i, j));
+				int red = pixel.getRed();
+				int blue = pixel.getBlue();
+				int green = pixel.getGreen();
 
+				/**
+				 * White = Bloque invisible
+				 * Orange = Bloque
+				 * Purple = Bloque especial
+				 * Red = Player
+				 * Green = Meta
+				 */
 				if (red == 255 && blue == 255 && green == 255) { // White pixel
-					handler.addObject(new Block(i * 32, j * 32, ObjectId.Block));
+					handler.addObject(new InvisibleBlock(i * 32, j * 32, ObjectId.Block));
+				}
+				if (red == 255 && blue == 0 && green == 154) { // Orange pixel
+					handler.addObject(new FloorBlock(i * 32, j * 32, ObjectId.Block));
+				}
+				if (red == 255 && blue == 209 && green == 0) { // Purple pixel
+					handler.addObject(new BrickBlock(i * 32, j * 32, ObjectId.Block));
+				}
+				if (red == 0 && blue == 0 && green == 255) { // Green pixel
+					handler.addObject(new WinZone(i * 32, j * 32, ObjectId.WinZone));
+				}
+				if (red == 255 && blue == 0 && green == 0) { // Red pixel
+					handler.addObject(new Player(i * 32, j * 32, ObjectId.Player, handler, this));
 				}
 			}
 		}
@@ -160,4 +189,11 @@ public class GamePanel extends Canvas implements Runnable {
 		return HEIGHT;
 	}
 
+	public boolean getWin() {
+		return win;
+	}
+
+	public void setWin(boolean win) {
+		this.win = win;
+	}
 }
