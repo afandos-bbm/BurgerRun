@@ -3,12 +3,16 @@ package alejandrofan2.burgerRun.framework;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import alejandrofan2.burgerRun.window.GameMenu;
+
 public class KeyListener extends KeyAdapter {
 
-	Handler handler;
+	private Handler handler;
+	private GameMenu menu;
 
-	public KeyListener(Handler handler) {
+	public KeyListener(Handler handler, GameMenu menu) {
 		this.handler = handler;
+		this.menu = menu;
 	}
 
 	@Override
@@ -17,6 +21,10 @@ public class KeyListener extends KeyAdapter {
 
 		for (int i = 0; i < handler.objects.size(); i++) {
 			GameObject workingObject = handler.objects.get(i);
+			if (key == KeyEvent.VK_ESCAPE) {
+				menu.setVisible(true);
+				menu.setFocusable(true);
+			}
 
 			if (workingObject.getId() == ObjectId.Player) {
 				if (key == KeyEvent.VK_D) {

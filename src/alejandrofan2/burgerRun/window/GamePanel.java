@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JOptionPane;
+
 import alejandrofan2.burgerRun.framework.BufferedImageLoader;
 import alejandrofan2.burgerRun.framework.Handler;
 import alejandrofan2.burgerRun.framework.KeyListener;
@@ -27,6 +29,7 @@ public class GamePanel extends Canvas implements Runnable {
 	private Thread thread;
 	private Handler handler;
 	private Camera camera;
+	private GameMenu menu;
 
 	public static int WIDTH, HEIGHT;
 
@@ -35,6 +38,10 @@ public class GamePanel extends Canvas implements Runnable {
 	private int[][] cloudsPos;
 
 	private boolean win = false;
+
+	public GamePanel(GameMenu gameMenu) {
+		this.menu = gameMenu;
+	}
 
 	public synchronized void start() {
 		if (running) {
@@ -97,11 +104,13 @@ public class GamePanel extends Canvas implements Runnable {
 		loadImageLevel(level);
 		cloudsPos = addClouds();
 
-		this.addKeyListener(new KeyListener(handler));
+		this.addKeyListener(new KeyListener(handler, menu));
 	}
 
 	private void win() {
-		running = false;
+		menu.setVisible(true);
+		menu.setWin(true);
+		JOptionPane.showMessageDialog(this, "Felicidades has ganado!", "Burger Run", JOptionPane.CLOSED_OPTION);
 	}
 
 	private void tick() {
@@ -226,5 +235,9 @@ public class GamePanel extends Canvas implements Runnable {
 
 	public void setWin(boolean win) {
 		this.win = win;
+	}
+
+	public boolean getrunning() {
+		return running;
 	}
 }

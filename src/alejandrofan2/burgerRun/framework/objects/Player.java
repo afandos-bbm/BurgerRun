@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
+import alejandrofan2.burgerRun.framework.BufferedImageLoader;
 import alejandrofan2.burgerRun.framework.GameObject;
 import alejandrofan2.burgerRun.framework.Handler;
 import alejandrofan2.burgerRun.framework.ObjectId;
@@ -16,6 +18,8 @@ public class Player extends GameObject {
 	private Handler handler;
 	private GamePanel game;
 
+	private BufferedImage playerimg;
+
 	private float width = 32, height = 64;
 	private final float MAX_SPEED = 15;
 
@@ -25,6 +29,9 @@ public class Player extends GameObject {
 		super(x, y, id);
 		this.handler = handler;
 		this.game = game;
+
+		BufferedImageLoader loader = new BufferedImageLoader();
+		playerimg = loader.loadImage("/super-mario.gif");
 	}
 
 	@Override
@@ -47,7 +54,7 @@ public class Player extends GameObject {
 		Graphics2D g2d = (Graphics2D) g;
 
 		g.setColor(Color.blue);
-		g.fillRect((int) x, (int) y, (int) width, (int) height);
+		g.drawImage(playerimg, (int) x, (int) y, (int) width, (int) height, game);
 
 		g.setColor(Color.red);
 		g2d.draw(getBounds());
