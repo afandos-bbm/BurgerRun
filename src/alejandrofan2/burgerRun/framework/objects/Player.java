@@ -78,12 +78,12 @@ public class Player extends GameObject{
 				
 				// Right
 				if (getBoundsRight().intersects(workingObject.getBounds())) {
-					x = workingObject.getX() - width;
+					x = workingObject.getX() - width - 1;
 				}
 				
 				// Left
 				if (getBoundsLeft().intersects(workingObject.getBounds())) {
-					x = workingObject.getX() + 35;
+					x = workingObject.getX() + 33;
 				}
 			}
 		}
