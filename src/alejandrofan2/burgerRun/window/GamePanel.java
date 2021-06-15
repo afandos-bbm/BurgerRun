@@ -12,8 +12,11 @@ import alejandrofan2.burgerRun.framework.BufferedImageLoader;
 import alejandrofan2.burgerRun.framework.Handler;
 import alejandrofan2.burgerRun.framework.KeyListener;
 import alejandrofan2.burgerRun.framework.ObjectId;
-import alejandrofan2.burgerRun.framework.objects.Block;
+import alejandrofan2.burgerRun.framework.objects.BrickBlock;
+import alejandrofan2.burgerRun.framework.objects.FloorBlock;
+import alejandrofan2.burgerRun.framework.objects.InvisibleBlock;
 import alejandrofan2.burgerRun.framework.objects.Player;
+import alejandrofan2.burgerRun.framework.objects.WinZone;
 
 public class GamePanel extends Canvas implements Runnable {
 
@@ -24,26 +27,29 @@ public class GamePanel extends Canvas implements Runnable {
 	private Thread thread;
 	private Handler handler;
 	private Camera camera;
-	
+
 	public static int WIDTH, HEIGHT;
-	
-	private BufferedImage level, clouds;
-	private final Integer NCLOUDS = 5;
-	
+
+	private BufferedImage level, clouds, doubleClouds;
+	private final Integer NCLOUDS = 15;
+	private int[][] cloudsPos;
+
+	private boolean win = false;
+
 	public synchronized void start() {
 		if (running) {
 			return;
 		}
-		
+
 		running = true;
 		thread = new Thread(this);
 		thread.start();
 	}
-	
+
 	@Override
 	public void run() {
 		System.out.println("Inside: " + Thread.currentThread().getName());
-		
+
 		init();
 		this.requestFocus();
 		long lastTime = System.nanoTime();
@@ -64,33 +70,40 @@ public class GamePanel extends Canvas implements Runnable {
 			}
 			render();
 			frames++;
-			
+
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
 				System.out.println("FPS: " + frames + " TPS: " + updates);
 				frames = 0;
 				updates = 0;
 			}
+			if (win) {
+				win();
+			}
 		}
 	}
-	
+
 	private void init() {
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
-		
+
 		BufferedImageLoader loader = new BufferedImageLoader();
-		//level =  loader.loadImage("/level.jpg");
-		//clouds = loader.loadImage("/clouds.png");
-		//loadImageLevel(level);
-		
-		camera = new Camera(0, 0);
+		level = loader.loadImage("/lvl1.png");
+		clouds = loader.loadImage("/cloud.png");
+		doubleClouds = loader.loadImage("/doubleCloud.png");
+
+		camera = new Camera(0, 0, WIDTH, HEIGHT);
 		handler = new Handler();
-		handler.addObject(new Player(100, 100, ObjectId.Player, handler));
-		handler.createLevel();
-		
+		loadImageLevel(level);
+		cloudsPos = addClouds();
+
 		this.addKeyListener(new KeyListener(handler));
 	}
-	
+
+	private void win() {
+		running = false;
+	}
+
 	private void tick() {
 		handler.tick();
 		for (int i = 0; i < handler.objects.size(); i++) {
@@ -99,56 +112,119 @@ public class GamePanel extends Canvas implements Runnable {
 			}
 		}
 	}
-	
+
 	private void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
 			this.createBufferStrategy(3);
 			return;
 		}
-		
+
 		Graphics g = bs.getDrawGraphics();
 		Graphics2D g2d = (Graphics2D) g;
 		////////////////
-		//Draw zone
+		// Draw zone
 		g.setColor(new Color(151, 181, 252));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		
+
 		g2d.translate(camera.getX(), camera.getY());
 
-//		for (int i = 0; i < clouds.getWidth() * NCLOUDS; i++) {
-//			g.drawImage(clouds, i, 50, this);
-//		}
-		handler.render(g);
-		
+		int count = 0;
+		for (int i = 600; i < clouds.getWidth() * NCLOUDS; i += 250) {
+			i += cloudsPos[1][count];
+			if (cloudsPos[2][count] >= 1) {
+				g.drawImage(clouds, i, cloudsPos[0][count], 110, 70, this);
+			} else
+				g.drawImage(doubleClouds, i, cloudsPos[0][count], 220, 150, this);
+
+			if (count == NCLOUDS - 1) {
+				break;
+			}
+			count++;
+
+		}
+		handler.render(g, camera);
+
 		g2d.translate(-camera.getX(), -camera.getY());
 		////////////////
 		g.dispose();
 		bs.show();
-		
+
 	}
-	
+
+	private int[][] addClouds() {
+		cloudsPos = new int[3][NCLOUDS];
+		for (int i = 0; i < NCLOUDS; i++) {
+			double random = (35 + (Math.random() * 150));
+			cloudsPos[0][i] = (int) random;
+		}
+		for (int i = 0; i < NCLOUDS; i++) {
+			double random = (Math.random() * 300);
+			cloudsPos[1][i] = (int) random;
+		}
+		for (int i = 0; i < NCLOUDS; i++) {
+			double random = (Math.random() * 3);
+			cloudsPos[2][i] = (int) random;
+		}
+		return cloudsPos;
+	}
+
 	public void setPreferredSize(int weight, int height) {
 		setPreferredSize(new Dimension(weight, height));
 		setMaximumSize(new Dimension(weight, height));
 		setMinimumSize(new Dimension(weight, height));
 	}
-	
+
 	private void loadImageLevel(BufferedImage image) {
 		int w = image.getWidth();
 		int h = image.getHeight();
-		
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				int pixel = image.getRGB(i, j);
-				int red = (pixel >> 16) & 0xff;
-				int blue = pixel & 0xff;
-				int green = (pixel >> 8) & 0xff;
-				
+
+		for (int i = 0; i < h / 2; i++) {
+			for (int j = 0; j < w / 2; j++) {
+				Color pixel = new Color(image.getRGB(i, j));
+				int red = pixel.getRed();
+				int blue = pixel.getBlue();
+				int green = pixel.getGreen();
+
+				/**
+				 * White = Bloque invisible
+				 * Orange = Bloque
+				 * Purple = Bloque especial
+				 * Red = Player
+				 * Green = Meta
+				 */
 				if (red == 255 && blue == 255 && green == 255) { // White pixel
-					handler.addObject(new Block(i*32, j*32, ObjectId.Block));
+					handler.addObject(new InvisibleBlock(i * 32, j * 32, ObjectId.Block));
+				}
+				if (red == 255 && blue == 0 && green == 154) { // Orange pixel
+					handler.addObject(new FloorBlock(i * 32, j * 32, ObjectId.Block));
+				}
+				if (red == 255 && blue == 209 && green == 0) { // Purple pixel
+					handler.addObject(new BrickBlock(i * 32, j * 32, ObjectId.Block));
+				}
+				if (red == 0 && blue == 0 && green == 255) { // Green pixel
+					handler.addObject(new WinZone(i * 32, j * 32, ObjectId.WinZone));
+				}
+				if (red == 255 && blue == 0 && green == 0) { // Red pixel
+					handler.addObject(new Player(i * 32, j * 32, ObjectId.Player, handler, this));
 				}
 			}
 		}
+	}
+
+	public int getWIDTH() {
+		return WIDTH;
+	}
+
+	public int getHEIGHT() {
+		return HEIGHT;
+	}
+
+	public boolean getWin() {
+		return win;
+	}
+
+	public void setWin(boolean win) {
+		this.win = win;
 	}
 }
