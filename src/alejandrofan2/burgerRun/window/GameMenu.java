@@ -33,6 +33,7 @@ public class GameMenu extends JFrame implements ActionListener {
 
 	private boolean playing = false;
 	private boolean win = false;
+	private boolean lose = false;
 
 	public GameMenu(int height, int width, String title) {
 		BufferedImageLoader loader = new BufferedImageLoader();
@@ -81,6 +82,12 @@ public class GameMenu extends JFrame implements ActionListener {
 				frame = new MainFrame(800, 407, "BurgerRun", new GamePanel(this));
 				playing = true;
 			}
+			if (win || lose) {
+				frame.dispose();
+				frame = new MainFrame(800, 407, "BurgerRun", new GamePanel(this));
+				win = false;
+				lose = false;
+			}
 			this.setVisible(false);
 		} else if (e.getSource() == restart) {
 			if (!playing) {
@@ -104,5 +111,9 @@ public class GameMenu extends JFrame implements ActionListener {
 
 	public void setWin(boolean win) {
 		this.win = win;
+	}
+
+	public void setLose(boolean lose) {
+		this.lose = lose;
 	}
 }

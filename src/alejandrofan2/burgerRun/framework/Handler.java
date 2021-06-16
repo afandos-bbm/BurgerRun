@@ -3,9 +3,7 @@ package alejandrofan2.burgerRun.framework;
 import java.awt.Graphics;
 import java.util.LinkedList;
 
-import alejandrofan2.burgerRun.framework.objects.FloorBlock;
 import alejandrofan2.burgerRun.window.Camera;
-import alejandrofan2.burgerRun.window.GamePanel;
 
 public class Handler {
 	public LinkedList<GameObject> objects = new LinkedList<GameObject>();
@@ -25,22 +23,6 @@ public class Handler {
 				workingObject.render(g);
 			}
 		}
-	}
-
-	public void createLevel() {
-		// Floor
-		for (int i = 0; i < GamePanel.WIDTH * 2; i += 32) {
-			addObject(new FloorBlock(i, GamePanel.HEIGHT - 32, ObjectId.Block));
-		}
-		// Left Barrier
-		for (int i = 0; i < GamePanel.HEIGHT + 32; i += 32) {
-			addObject(new FloorBlock(0, i, ObjectId.Block));
-		}
-		// 2ºFloor
-		for (int i = 200; i < 600; i += 32) {
-			addObject(new FloorBlock(i, 320, ObjectId.Block));
-		}
-
 	}
 
 	public void addObject(GameObject object) {

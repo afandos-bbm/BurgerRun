@@ -7,7 +7,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 
 import alejandrofan2.burgerRun.framework.BufferedImageLoader;
@@ -31,13 +36,16 @@ public class GamePanel extends Canvas implements Runnable {
 	private Camera camera;
 	private GameMenu menu;
 
-	public static int WIDTH, HEIGHT;
+	public int WIDTH, HEIGHT;
 
 	private BufferedImage level, clouds, doubleClouds;
-	private final Integer NCLOUDS = 15;
+	private final Integer NCLOUDS = 25;
 	private int[][] cloudsPos;
 
+	private Clip backMusic;
+
 	private boolean win = false;
+	private boolean lose = false;
 
 	public GamePanel(GameMenu gameMenu) {
 		this.menu = gameMenu;
@@ -86,6 +94,11 @@ public class GamePanel extends Canvas implements Runnable {
 			}
 			if (win) {
 				win();
+				setWin(false);
+			}
+			if (lose) {
+				lose();
+				setLose(false);
 			}
 		}
 	}
@@ -93,6 +106,14 @@ public class GamePanel extends Canvas implements Runnable {
 	private void init() {
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
+
+		try {
+			backMusic = AudioSystem.getClip();
+			backMusic.open(AudioSystem.getAudioInputStream(getClass().getResource("/mario-song.wav")));
+		} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+			// System.err.println("Error loading music file");
+			e.printStackTrace();
+		}
 
 		BufferedImageLoader loader = new BufferedImageLoader();
 		level = loader.loadImage("/lvl1.png");
@@ -108,9 +129,17 @@ public class GamePanel extends Canvas implements Runnable {
 	}
 
 	private void win() {
+		JOptionPane.showMessageDialog(this, "Felicidades has ganado!", "Burger Run", JOptionPane.CLOSED_OPTION);
+		running = false;
 		menu.setVisible(true);
 		menu.setWin(true);
-		JOptionPane.showMessageDialog(this, "Felicidades has ganado!", "Burger Run", JOptionPane.CLOSED_OPTION);
+	}
+
+	private void lose() {
+		JOptionPane.showConfirmDialog(this, "Has perdido...", "Burger Run", JOptionPane.CLOSED_OPTION);
+		running = false;
+		menu.setWin(true);
+		menu.setVisible(true);
 	}
 
 	private void tick() {
@@ -119,6 +148,9 @@ public class GamePanel extends Canvas implements Runnable {
 			if (handler.objects.get(i).getId() == ObjectId.Player) {
 				camera.tick(handler.objects.get(i));
 			}
+		}
+		if (!backMusic.isRunning()) {
+			backMusic.start();
 		}
 	}
 
@@ -133,25 +165,13 @@ public class GamePanel extends Canvas implements Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		////////////////
 		// Draw zone
-		g.setColor(new Color(151, 181, 252));
+		g.setColor(new Color(153, 204, 255));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 
+		// Camera zone
 		g2d.translate(camera.getX(), camera.getY());
 
-		int count = 0;
-		for (int i = 600; i < clouds.getWidth() * NCLOUDS; i += 250) {
-			i += cloudsPos[1][count];
-			if (cloudsPos[2][count] >= 1) {
-				g.drawImage(clouds, i, cloudsPos[0][count], 110, 70, this);
-			} else
-				g.drawImage(doubleClouds, i, cloudsPos[0][count], 220, 150, this);
-
-			if (count == NCLOUDS - 1) {
-				break;
-			}
-			count++;
-
-		}
+		renderClouds(g);
 		handler.render(g, camera);
 
 		g2d.translate(-camera.getX(), -camera.getY());
@@ -172,10 +192,27 @@ public class GamePanel extends Canvas implements Runnable {
 			cloudsPos[1][i] = (int) random;
 		}
 		for (int i = 0; i < NCLOUDS; i++) {
-			double random = (Math.random() * 3);
+			double random = (Math.random() * 5);
 			cloudsPos[2][i] = (int) random;
 		}
 		return cloudsPos;
+	}
+
+	private void renderClouds(Graphics g) {
+		int count = 0;
+		for (int i = 600; i < clouds.getWidth() * NCLOUDS; i += 550) {
+			i += cloudsPos[1][count];
+			if (cloudsPos[2][count] >= 1) {
+				g.drawImage(clouds, i, cloudsPos[0][count], 110, 70, this);
+			} else
+				g.drawImage(doubleClouds, i, cloudsPos[0][count], 220, 150, this);
+
+			if (count == NCLOUDS - 1) {
+				break;
+			}
+			count++;
+
+		}
 	}
 
 	public void setPreferredSize(int weight, int height) {
@@ -239,5 +276,9 @@ public class GamePanel extends Canvas implements Runnable {
 
 	public boolean getrunning() {
 		return running;
+	}
+
+	public void setLose(boolean lose) {
+		this.lose = lose;
 	}
 }

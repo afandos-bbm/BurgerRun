@@ -2,7 +2,6 @@ package alejandrofan2.burgerRun.framework.objects;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -21,7 +20,7 @@ public class Player extends GameObject {
 	private BufferedImage playerimg;
 
 	private float width = 32, height = 64;
-	private final float MAX_SPEED = 15;
+	private final float MAX_SPEED = 40;
 
 	private float gravity = 0.09f;
 
@@ -45,23 +44,17 @@ public class Player extends GameObject {
 				velY = MAX_SPEED;
 			}
 		}
+		if (y > 500) {
+			game.setLose(true);
+		}
 
 		collision(objects);
 	}
 
 	@Override
 	public void render(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-
 		g.setColor(Color.blue);
 		g.drawImage(playerimg, (int) x, (int) y, (int) width, (int) height, game);
-
-		g.setColor(Color.red);
-		g2d.draw(getBounds());
-		g2d.draw(getBoundsTop());
-		g2d.draw(getBoundsRight());
-		g2d.draw(getBoundsLeft());
-
 	}
 
 	private void collision(LinkedList<GameObject> objects) {
