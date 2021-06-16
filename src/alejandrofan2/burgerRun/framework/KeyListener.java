@@ -37,6 +37,14 @@ public class KeyListener extends KeyAdapter {
 					workingObject.setJumping(true);
 					workingObject.setVelY(-5);
 				}
+				if (key == KeyEvent.VK_W && !workingObject.isJumping()) {
+					workingObject.setJumping(true);
+					workingObject.setVelY(-5);
+				}
+				if (key == KeyEvent.VK_S) {
+					workingObject.setDucking(true);
+					workingObject.setVelX(0);
+				}
 			}
 		}
 	}
@@ -58,7 +66,12 @@ public class KeyListener extends KeyAdapter {
 				if (key == KeyEvent.VK_SPACE) {
 					workingObject.setVelY(0);
 				}
-
+				if (key == KeyEvent.VK_W) {
+					workingObject.setVelY(0);
+				}
+				if (key == KeyEvent.VK_S) {
+					workingObject.setDucking(false);
+				}
 			}
 		}
 	}

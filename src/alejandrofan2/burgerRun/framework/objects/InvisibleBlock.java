@@ -6,11 +6,15 @@ import java.util.LinkedList;
 
 import alejandrofan2.burgerRun.framework.GameObject;
 import alejandrofan2.burgerRun.framework.ObjectId;
+import alejandrofan2.burgerRun.framework.textureManager.Texture;
+import alejandrofan2.burgerRun.window.GamePanel;
 
 public class InvisibleBlock extends GameObject {
 
-	public InvisibleBlock(float x, float y, ObjectId id) {
-		super(x, y, id);
+	private Texture tex = GamePanel.getTextures();
+
+	public InvisibleBlock(float x, float y, ObjectId id, GamePanel game) {
+		super(x, y, id, game);
 	}
 
 	@Override

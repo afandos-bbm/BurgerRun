@@ -24,6 +24,7 @@ import alejandrofan2.burgerRun.framework.objects.FloorBlock;
 import alejandrofan2.burgerRun.framework.objects.InvisibleBlock;
 import alejandrofan2.burgerRun.framework.objects.Player;
 import alejandrofan2.burgerRun.framework.objects.WinZone;
+import alejandrofan2.burgerRun.framework.textureManager.Texture;
 
 public class GamePanel extends Canvas implements Runnable {
 
@@ -33,6 +34,7 @@ public class GamePanel extends Canvas implements Runnable {
 	private boolean running = false;
 	private Thread thread;
 	private Handler handler;
+	private static Texture textures;
 	private Camera camera;
 	private GameMenu menu;
 
@@ -42,7 +44,7 @@ public class GamePanel extends Canvas implements Runnable {
 	private final Integer NCLOUDS = 25;
 	private int[][] cloudsPos;
 
-	private Clip backMusic;
+	private Clip backMusic, loseMusic, winMusic;
 
 	private boolean win = false;
 	private boolean lose = false;
@@ -92,14 +94,6 @@ public class GamePanel extends Canvas implements Runnable {
 				frames = 0;
 				updates = 0;
 			}
-			if (win) {
-				win();
-				setWin(false);
-			}
-			if (lose) {
-				lose();
-				setLose(false);
-			}
 		}
 	}
 
@@ -107,14 +101,9 @@ public class GamePanel extends Canvas implements Runnable {
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
 
-		try {
-			backMusic = AudioSystem.getClip();
-			backMusic.open(AudioSystem.getAudioInputStream(getClass().getResource("/mario-song.wav")));
-		} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-			// System.err.println("Error loading music file");
-			e.printStackTrace();
-		}
+		loadMusic();
 
+		textures = new Texture();
 		BufferedImageLoader loader = new BufferedImageLoader();
 		level = loader.loadImage("/lvl1.png");
 		clouds = loader.loadImage("/cloud.png");
@@ -149,8 +138,22 @@ public class GamePanel extends Canvas implements Runnable {
 				camera.tick(handler.objects.get(i));
 			}
 		}
-		if (!backMusic.isRunning()) {
-			backMusic.start();
+		if (!lose && !win) {
+			if (!backMusic.isRunning()) {
+				backMusic.start();
+			}
+		} else if (win) {
+			backMusic.stop();
+			winMusic.start();
+			backMusic.close();
+			win();
+			setWin(false);
+		} else if (lose) {
+			backMusic.stop();
+			loseMusic.start();
+			backMusic.close();
+			lose();
+			setLose(false);
 		}
 	}
 
@@ -240,21 +243,34 @@ public class GamePanel extends Canvas implements Runnable {
 				 * Green = Meta
 				 */
 				if (red == 255 && blue == 255 && green == 255) { // White pixel
-					handler.addObject(new InvisibleBlock(i * 32, j * 32, ObjectId.Block));
+					handler.addObject(new InvisibleBlock(i * 32, j * 32, ObjectId.Block, this));
 				}
 				if (red == 255 && blue == 0 && green == 154) { // Orange pixel
-					handler.addObject(new FloorBlock(i * 32, j * 32, ObjectId.Block));
+					handler.addObject(new FloorBlock(i * 32, j * 32, ObjectId.Block, this));
 				}
 				if (red == 255 && blue == 209 && green == 0) { // Purple pixel
-					handler.addObject(new BrickBlock(i * 32, j * 32, ObjectId.Block));
+					handler.addObject(new BrickBlock(i * 32, j * 32, ObjectId.Block, this));
 				}
 				if (red == 0 && blue == 0 && green == 255) { // Green pixel
-					handler.addObject(new WinZone(i * 32, j * 32, ObjectId.WinZone));
+					handler.addObject(new WinZone(i * 32, j * 32, ObjectId.WinZone, this));
 				}
 				if (red == 255 && blue == 0 && green == 0) { // Red pixel
 					handler.addObject(new Player(i * 32, j * 32, ObjectId.Player, handler, this));
 				}
 			}
+		}
+	}
+
+	public void loadMusic() {
+		try {
+			backMusic = AudioSystem.getClip();
+			backMusic.open(AudioSystem.getAudioInputStream(getClass().getResource("/marioSong.wav")));
+			winMusic = AudioSystem.getClip();
+			winMusic.open(AudioSystem.getAudioInputStream(getClass().getResource("/winEffect.wav")));
+			loseMusic = AudioSystem.getClip();
+			loseMusic.open(AudioSystem.getAudioInputStream(getClass().getResource("/loseEffect.wav")));
+		} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+			System.err.println("Error loading music file");
 		}
 	}
 
@@ -280,5 +296,9 @@ public class GamePanel extends Canvas implements Runnable {
 
 	public void setLose(boolean lose) {
 		this.lose = lose;
+	}
+
+	public static Texture getTextures() {
+		return textures;
 	}
 }

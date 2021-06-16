@@ -7,11 +7,15 @@ import java.util.LinkedList;
 
 import alejandrofan2.burgerRun.framework.GameObject;
 import alejandrofan2.burgerRun.framework.ObjectId;
+import alejandrofan2.burgerRun.framework.textureManager.Texture;
+import alejandrofan2.burgerRun.window.GamePanel;
 
 public class FloorBlock extends GameObject {
 
-	public FloorBlock(float x, float y, ObjectId id) {
-		super(x, y, id);
+	private Texture tex = GamePanel.getTextures();
+
+	public FloorBlock(float x, float y, ObjectId id, GamePanel game) {
+		super(x, y, id, game);
 	}
 
 	@Override
@@ -21,7 +25,7 @@ public class FloorBlock extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		g.setColor(Color.black);
-		g.drawRect((int) x, (int) y, 32, 32);
+		g.drawImage(tex.blockTex[0], (int) x, (int) y, 32, 32, game);
 	}
 
 	@Override

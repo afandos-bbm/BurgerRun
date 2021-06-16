@@ -4,18 +4,24 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.LinkedList;
 
+import alejandrofan2.burgerRun.window.GamePanel;
+
 public abstract class GameObject {
+
+	protected GamePanel game;
 
 	protected ObjectId id;
 	protected float x, y;
 	protected float velX, velY;
 	protected boolean falling = true;
 	protected boolean jumping = false;
+	protected boolean ducking = false;
 
-	public GameObject(float x, float y, ObjectId id) {
+	public GameObject(float x, float y, ObjectId id, GamePanel game) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
+		this.game = game;
 	}
 
 	public abstract void tick(LinkedList<GameObject> object);
@@ -76,4 +82,11 @@ public abstract class GameObject {
 		this.jumping = jumping;
 	}
 
+	public boolean isDucking() {
+		return ducking;
+	}
+
+	public void setDucking(boolean ducking) {
+		this.ducking = ducking;
+	}
 }
