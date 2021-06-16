@@ -20,8 +20,9 @@ public class GameMenu extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 6261175851689900695L;
 	private Container contentPane = getContentPane();
-	private JPanel mainPanel = new JPanel();
+	private JPanel menuPanel = new JPanel();
 	private MainFrame frame;
+	private GamePanel game;
 
 	private BufferedImage logo;
 	private JLabel logoLabel;
@@ -64,45 +65,50 @@ public class GameMenu extends JFrame implements ActionListener {
 		exit.addActionListener(this);
 		nameLabel.setBounds(new Rectangle(40, 315, 200, 50));
 
-		mainPanel.add(logoLabel);
-		mainPanel.add(play);
-		mainPanel.add(restart);
-		mainPanel.add(lvlSelector);
-		mainPanel.add(exit);
-		mainPanel.add(nameLabel);
-		mainPanel.setLayout(null);
+		menuPanel.add(logoLabel);
+		menuPanel.add(play);
+		menuPanel.add(restart);
+		menuPanel.add(lvlSelector);
+		menuPanel.add(exit);
+		menuPanel.add(nameLabel);
+		menuPanel.setLayout(null);
 
-		contentPane.add(mainPanel);
+		contentPane.add(menuPanel);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == play) {
 			if (!playing) {
-				frame = new MainFrame(800, 407, "BurgerRun", new GamePanel(this));
+				game = new GamePanel(this);
+				frame = new MainFrame(800, 407, "BurgerRun", game);
 				playing = true;
 			}
 			if (win || lose) {
+				game.backMusic.stop();
 				frame.dispose();
-				frame = new MainFrame(800, 407, "BurgerRun", new GamePanel(this));
+				game = new GamePanel(this);
+				frame = new MainFrame(800, 407, "BurgerRun", game);
 				win = false;
 				lose = false;
 			}
 			this.setVisible(false);
 		} else if (e.getSource() == restart) {
 			if (!playing) {
-				JOptionPane.showConfirmDialog(mainPanel, "Debes de estar jugando para poder reiniciar el nivel.",
+				JOptionPane.showConfirmDialog(menuPanel, "Debes de estar jugando para poder reiniciar el nivel.",
 						"AVISO", JOptionPane.CLOSED_OPTION);
 			} else {
+				game.backMusic.stop();
 				frame.dispose();
-				frame = new MainFrame(800, 407, "BurgerRun", new GamePanel(this));
+				game = new GamePanel(this);
+				frame = new MainFrame(800, 407, "BurgerRun", game);
 				this.setVisible(false);
 			}
 		} else if (e.getSource() == lvlSelector) {
-			JOptionPane.showConfirmDialog(mainPanel, "Proximamente se implementaran nuevos niveles.", "AVISO",
+			JOptionPane.showConfirmDialog(menuPanel, "Proximamente se implementaran nuevos niveles.", "AVISO",
 					JOptionPane.CLOSED_OPTION);
 		} else if (e.getSource() == exit) {
-			if (JOptionPane.showConfirmDialog(mainPanel, "Seguro que quieres cerrar el juego?", "AVISO",
+			if (JOptionPane.showConfirmDialog(menuPanel, "Seguro que quieres cerrar el juego?", "AVISO",
 					JOptionPane.YES_NO_OPTION) == 0) {
 				System.exit(0);
 			}

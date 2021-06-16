@@ -4,27 +4,31 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import alejandrofan2.burgerRun.window.GameMenu;
+import alejandrofan2.burgerRun.window.GamePanel;
 
 public class KeyListener extends KeyAdapter {
 
 	private Handler handler;
 	private GameMenu menu;
+	private GamePanel game;
 
-	public KeyListener(Handler handler, GameMenu menu) {
+	public KeyListener(Handler handler, GameMenu menu, GamePanel game) {
 		this.handler = handler;
 		this.menu = menu;
+		this.game = game;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 
+		if (key == KeyEvent.VK_ESCAPE) {
+			menu.setVisible(true);
+			menu.setFocusable(true);
+		}
+
 		for (int i = 0; i < handler.objects.size(); i++) {
 			GameObject workingObject = handler.objects.get(i);
-			if (key == KeyEvent.VK_ESCAPE) {
-				menu.setVisible(true);
-				menu.setFocusable(true);
-			}
 
 			if (workingObject.getId() == ObjectId.Player) {
 				if (key == KeyEvent.VK_D) {

@@ -16,6 +16,7 @@ public abstract class GameObject {
 	protected boolean falling = true;
 	protected boolean jumping = false;
 	protected boolean ducking = false;
+	protected boolean air = false;
 
 	public GameObject(float x, float y, ObjectId id, GamePanel game) {
 		this.id = id;
@@ -88,5 +89,13 @@ public abstract class GameObject {
 
 	public void setDucking(boolean ducking) {
 		this.ducking = ducking;
+	}
+
+	public boolean isAir() {
+		return air;
+	}
+
+	public void setAir(boolean air) {
+		this.air = air;
 	}
 }

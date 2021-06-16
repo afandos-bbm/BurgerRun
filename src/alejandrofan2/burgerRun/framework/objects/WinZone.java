@@ -13,9 +13,11 @@ import alejandrofan2.burgerRun.window.GamePanel;
 public class WinZone extends GameObject {
 
 	private Texture tex = GamePanel.getTextures();
+	private int type;
 
-	public WinZone(float x, float y, ObjectId id, GamePanel game) {
+	public WinZone(float x, float y, int type, ObjectId id, GamePanel game) {
 		super(x, y, id, game);
+		this.type = type;
 	}
 
 	@Override
@@ -25,7 +27,16 @@ public class WinZone extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		g.setColor(Color.green);
-		g.fillRect((int) x, (int) y, 32, 32);
+
+		switch (type) {
+		case 1:
+			g.drawImage(tex.blockTex[8], (int) x, (int) y, 32, 32, game);
+			break;
+		case 2:
+			g.drawImage(tex.blockTex[9], (int) x, (int) y, 32, 32, game);
+		default:
+			break;
+		}
 	}
 
 	@Override

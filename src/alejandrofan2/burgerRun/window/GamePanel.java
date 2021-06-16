@@ -19,8 +19,7 @@ import alejandrofan2.burgerRun.framework.BufferedImageLoader;
 import alejandrofan2.burgerRun.framework.Handler;
 import alejandrofan2.burgerRun.framework.KeyListener;
 import alejandrofan2.burgerRun.framework.ObjectId;
-import alejandrofan2.burgerRun.framework.objects.BrickBlock;
-import alejandrofan2.burgerRun.framework.objects.FloorBlock;
+import alejandrofan2.burgerRun.framework.objects.Block;
 import alejandrofan2.burgerRun.framework.objects.InvisibleBlock;
 import alejandrofan2.burgerRun.framework.objects.Player;
 import alejandrofan2.burgerRun.framework.objects.WinZone;
@@ -44,7 +43,7 @@ public class GamePanel extends Canvas implements Runnable {
 	private final Integer NCLOUDS = 25;
 	private int[][] cloudsPos;
 
-	private Clip backMusic, loseMusic, winMusic;
+	protected Clip backMusic, loseMusic, winMusic;
 
 	private boolean win = false;
 	private boolean lose = false;
@@ -101,6 +100,8 @@ public class GamePanel extends Canvas implements Runnable {
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
 
+		this.createBufferStrategy(3);
+
 		loadMusic();
 
 		textures = new Texture();
@@ -114,7 +115,7 @@ public class GamePanel extends Canvas implements Runnable {
 		loadImageLevel(level);
 		cloudsPos = addClouds();
 
-		this.addKeyListener(new KeyListener(handler, menu));
+		this.addKeyListener(new KeyListener(handler, menu, this));
 	}
 
 	private void win() {
@@ -214,7 +215,6 @@ public class GamePanel extends Canvas implements Runnable {
 				break;
 			}
 			count++;
-
 		}
 	}
 
@@ -228,7 +228,7 @@ public class GamePanel extends Canvas implements Runnable {
 		int w = image.getWidth();
 		int h = image.getHeight();
 
-		for (int i = 0; i < h / 2; i++) {
+		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w / 2; j++) {
 				Color pixel = new Color(image.getRGB(i, j));
 				int red = pixel.getRed();
@@ -236,26 +236,54 @@ public class GamePanel extends Canvas implements Runnable {
 				int green = pixel.getGreen();
 
 				/**
-				 * White = Bloque invisible
-				 * Orange = Bloque
-				 * Purple = Bloque especial
 				 * Red = Player
-				 * Green = Meta
+				 * White = Invisible Block
+				 * Orange = Floor Block
+				 * Purple = ? Block
+				 * Cyan = Squared Block
+				 * Brown = Brick Block
+				 * Blue = WinZone Top
+				 * Green = Win Zone
+				 * Yellow = Pipeline body left
+				 * Purple = Pipeline body right
+				 * Bubble gum = Pipeline top left
+				 * Dark BLue = Pipeline top right
 				 */
 				if (red == 255 && blue == 255 && green == 255) { // White pixel
 					handler.addObject(new InvisibleBlock(i * 32, j * 32, ObjectId.Block, this));
 				}
 				if (red == 255 && blue == 0 && green == 154) { // Orange pixel
-					handler.addObject(new FloorBlock(i * 32, j * 32, ObjectId.Block, this));
+					handler.addObject(new Block(i * 32, j * 32, 1, ObjectId.Block, this));
 				}
 				if (red == 255 && blue == 209 && green == 0) { // Purple pixel
-					handler.addObject(new BrickBlock(i * 32, j * 32, ObjectId.Block, this));
+					handler.addObject(new Block(i * 32, j * 32, 4, ObjectId.Block, this));
 				}
 				if (red == 0 && blue == 0 && green == 255) { // Green pixel
-					handler.addObject(new WinZone(i * 32, j * 32, ObjectId.WinZone, this));
+					handler.addObject(new WinZone(i * 32, j * 32, 1, ObjectId.WinZone, this));
 				}
 				if (red == 255 && blue == 0 && green == 0) { // Red pixel
 					handler.addObject(new Player(i * 32, j * 32, ObjectId.Player, handler, this));
+				}
+				if (red == 0 && blue == 240 && green == 255) { // Cyan pixel
+					handler.addObject(new Block(i * 32, j * 32, 3, ObjectId.Block, this));
+				}
+				if (red == 153 && blue == 1 && green == 90) { // Brown pixel
+					handler.addObject(new Block(i * 32, j * 32, 2, ObjectId.Block, this));
+				}
+				if (red == 0 && blue == 255 && green == 0) { // Blue pixel
+					handler.addObject(new WinZone(i * 32, j * 32, 2, ObjectId.WinZone, this));
+				}
+				if (red == 255 && blue == 0 && green == 223) { // Yellow pixel
+					handler.addObject(new Block(i * 32, j * 32, 5, ObjectId.Block, this));
+				}
+				if (red == 76 && blue == 255 && green == 0) { // Purple pixel
+					handler.addObject(new Block(i * 32, j * 32, 6, ObjectId.Block, this));
+				}
+				if (red == 255 && blue == 98 && green == 0) { // Bubble Gum pixel
+					handler.addObject(new Block(i * 32, j * 32, 7, ObjectId.Block, this));
+				}
+				if (red == 0 && blue == 102 && green == 0) { // Dark Blue pixel
+					handler.addObject(new Block(i * 32, j * 32, 8, ObjectId.Block, this));
 				}
 			}
 		}

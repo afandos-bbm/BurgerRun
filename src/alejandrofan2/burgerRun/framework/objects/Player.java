@@ -36,7 +36,7 @@ public class Player extends GameObject {
 		x += velX;
 		y += velY;
 
-		if (falling || jumping) {
+		if (falling && jumping || falling) {
 			velY += gravity;
 			if (velY > MAX_SPEED) {
 				velY = MAX_SPEED;
@@ -74,9 +74,9 @@ public class Player extends GameObject {
 					velY = 0;
 					falling = false;
 					jumping = false;
-				} else
+				} else {
 					falling = true;
-
+				}
 				// Top
 				if (getBoundsTop().intersects(workingObject.getBounds())) {
 					y = workingObject.getY() + 35;
