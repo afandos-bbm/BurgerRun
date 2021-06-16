@@ -6,6 +6,13 @@ import java.util.LinkedList;
 
 import alejandrofan2.burgerRun.window.GamePanel;
 
+/**
+ * One of the most important classes is parent and manages all the objects in
+ * the game.
+ * 
+ * @author alejandrofan2
+ *
+ */
 public abstract class GameObject {
 
 	protected GamePanel game;
@@ -18,6 +25,14 @@ public abstract class GameObject {
 	protected boolean ducking = false;
 	protected boolean air = false;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param id
+	 * @param game
+	 */
 	public GameObject(float x, float y, ObjectId id, GamePanel game) {
 		this.id = id;
 		this.x = x;
@@ -25,11 +40,28 @@ public abstract class GameObject {
 		this.game = game;
 	}
 
+	/**
+	 * Updates the logic of the object.
+	 * 
+	 * @param object
+	 */
 	public abstract void tick(LinkedList<GameObject> object);
 
+	/**
+	 * Draw the object.
+	 * 
+	 * @param g
+	 */
 	public abstract void render(Graphics g);
 
+	/**
+	 * Set the bounds for collision.
+	 * 
+	 * @return Rectangle
+	 */
 	public abstract Rectangle getBounds();
+
+	// Getters and Setters
 
 	public float getX() {
 		return x;

@@ -4,6 +4,12 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Loads all textures statically so that objects load them later.
+ * 
+ * @author alejandrofan2
+ *
+ */
 public class Texture {
 
 	private SpriteSheet textureSheet;
@@ -12,6 +18,9 @@ public class Texture {
 	public BufferedImage[] blockTex = new BufferedImage[11];
 	public BufferedImage[] playerTex = new BufferedImage[7];
 
+	/**
+	 * Constructor.
+	 */
 	public Texture() {
 		try {
 			textureSheetImg = ImageIO.read(getClass().getResource("/textureSheet.png"));
@@ -26,6 +35,9 @@ public class Texture {
 		getTextures();
 	}
 
+	/**
+	 * Gets the textures of the sheet.
+	 */
 	private void getTextures() {
 		// Blocks
 		blockTex[0] = textureSheet.grabTexture(1, 1, 32, 32); // Floor Block

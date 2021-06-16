@@ -10,11 +10,26 @@ import alejandrofan2.burgerRun.framework.ObjectId;
 import alejandrofan2.burgerRun.framework.textureManager.Texture;
 import alejandrofan2.burgerRun.window.GamePanel;
 
+/**
+ * Defines the solid blocks that are seen playing.
+ * 
+ * @author alejandrofan2
+ *
+ */
 public class Block extends GameObject {
 
 	private Texture tex = GamePanel.getTextures();
 	private int type;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param type
+	 * @param id
+	 * @param game
+	 */
 	public Block(float x, float y, int type, ObjectId id, GamePanel game) {
 		super(x, y, id, game);
 		this.type = type;

@@ -4,18 +4,27 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import alejandrofan2.burgerRun.window.GameMenu;
-import alejandrofan2.burgerRun.window.GamePanel;
 
+/**
+ * This class handles the key inputs.
+ * 
+ * @author alejandrofan2
+ *
+ */
 public class KeyListener extends KeyAdapter {
 
 	private Handler handler;
 	private GameMenu menu;
-	private GamePanel game;
 
-	public KeyListener(Handler handler, GameMenu menu, GamePanel game) {
+	/**
+	 * Constructor.
+	 * 
+	 * @param handler
+	 * @param menu
+	 */
+	public KeyListener(Handler handler, GameMenu menu) {
 		this.handler = handler;
 		this.menu = menu;
-		this.game = game;
 	}
 
 	@Override

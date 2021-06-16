@@ -9,10 +9,24 @@ import alejandrofan2.burgerRun.framework.ObjectId;
 import alejandrofan2.burgerRun.framework.textureManager.Texture;
 import alejandrofan2.burgerRun.window.GamePanel;
 
+/**
+ * Define the solid blocks that cannot be seen playing.
+ * 
+ * @author alejandrofan2
+ *
+ */
 public class InvisibleBlock extends GameObject {
 
 	private Texture tex = GamePanel.getTextures();
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param id
+	 * @param game
+	 */
 	public InvisibleBlock(float x, float y, ObjectId id, GamePanel game) {
 		super(x, y, id, game);
 	}

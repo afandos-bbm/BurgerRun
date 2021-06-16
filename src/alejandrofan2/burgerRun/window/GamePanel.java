@@ -25,9 +25,16 @@ import alejandrofan2.burgerRun.framework.objects.Player;
 import alejandrofan2.burgerRun.framework.objects.WinZone;
 import alejandrofan2.burgerRun.framework.textureManager.Texture;
 
+/**
+ * This does the magic, collects all the components and creates the scene of the
+ * game. In addition, it also takes care of the fluidity, loading the levels,
+ * the music ...
+ * 
+ * @author alejandrofan2
+ *
+ */
 public class GamePanel extends Canvas implements Runnable {
 
-	// constants
 	private static final long serialVersionUID = 3367166757979631248L;
 
 	private boolean running = false;
@@ -48,10 +55,18 @@ public class GamePanel extends Canvas implements Runnable {
 	private boolean win = false;
 	private boolean lose = false;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param gameMenu
+	 */
 	public GamePanel(GameMenu gameMenu) {
 		this.menu = gameMenu;
 	}
 
+	/**
+	 * Start the thread to be able to start running the game.
+	 */
 	public synchronized void start() {
 		if (running) {
 			return;
@@ -61,6 +76,9 @@ public class GamePanel extends Canvas implements Runnable {
 		thread = new Thread(this);
 		thread.start();
 	}
+
+	// This method contains the main loop of the game, which in turn adjusts the TPS
+	// so that the game runs equally smoothly on all PCs.
 
 	@Override
 	public void run() {
@@ -96,6 +114,10 @@ public class GamePanel extends Canvas implements Runnable {
 		}
 	}
 
+	/**
+	 * Loads everything the game needs to load: textures, music, camera, listeners,
+	 * level, buffer...
+	 */
 	private void init() {
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
@@ -115,23 +137,13 @@ public class GamePanel extends Canvas implements Runnable {
 		loadImageLevel(level);
 		cloudsPos = addClouds();
 
-		this.addKeyListener(new KeyListener(handler, menu, this));
+		this.addKeyListener(new KeyListener(handler, menu));
 	}
 
-	private void win() {
-		JOptionPane.showMessageDialog(this, "Felicidades has ganado!", "Burger Run", JOptionPane.CLOSED_OPTION);
-		running = false;
-		menu.setVisible(true);
-		menu.setWin(true);
-	}
-
-	private void lose() {
-		JOptionPane.showConfirmDialog(this, "Has perdido...", "Burger Run", JOptionPane.CLOSED_OPTION);
-		running = false;
-		menu.setWin(true);
-		menu.setVisible(true);
-	}
-
+	/**
+	 * Update the logic of all objects with the handler and run your own logic to
+	 * check the state of the game.
+	 */
 	private void tick() {
 		handler.tick();
 		for (int i = 0; i < handler.objects.size(); i++) {
@@ -158,6 +170,10 @@ public class GamePanel extends Canvas implements Runnable {
 		}
 	}
 
+	/**
+	 * The fun part of the game, this method draws all components and objects on the
+	 * canvas.
+	 */
 	private void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
@@ -179,12 +195,39 @@ public class GamePanel extends Canvas implements Runnable {
 		handler.render(g, camera);
 
 		g2d.translate(-camera.getX(), -camera.getY());
+		// Ends Camera Zone
+		// Ends Draw Zone
 		////////////////
 		g.dispose();
 		bs.show();
 
 	}
 
+	/**
+	 * This method is executed when the player wins the game.
+	 */
+	private void win() {
+		JOptionPane.showMessageDialog(this, "Felicidades has ganado!", "Burger Run", JOptionPane.CLOSED_OPTION);
+		running = false;
+		menu.setVisible(true);
+		menu.setWin(true);
+	}
+
+	/**
+	 * This method is executed when the player loses the game.
+	 */
+	private void lose() {
+		JOptionPane.showConfirmDialog(this, "Has perdido...", "Burger Run", JOptionPane.CLOSED_OPTION);
+		running = false;
+		menu.setWin(true);
+		menu.setVisible(true);
+	}
+
+	/**
+	 * Generates a series of randoms that will serve to later create the clouds.
+	 * 
+	 * @return int[][]
+	 */
 	private int[][] addClouds() {
 		cloudsPos = new int[3][NCLOUDS];
 		for (int i = 0; i < NCLOUDS; i++) {
@@ -202,6 +245,11 @@ public class GamePanel extends Canvas implements Runnable {
 		return cloudsPos;
 	}
 
+	/**
+	 * Draw the clouds on the canvas.
+	 * 
+	 * @param g
+	 */
 	private void renderClouds(Graphics g) {
 		int count = 0;
 		for (int i = 600; i < clouds.getWidth() * NCLOUDS; i += 550) {
@@ -218,12 +266,12 @@ public class GamePanel extends Canvas implements Runnable {
 		}
 	}
 
-	public void setPreferredSize(int weight, int height) {
-		setPreferredSize(new Dimension(weight, height));
-		setMaximumSize(new Dimension(weight, height));
-		setMinimumSize(new Dimension(weight, height));
-	}
-
+	/**
+	 * It is responsible for loading a level through a black background image that
+	 * contains colored pixels which represent different objects.
+	 * 
+	 * @param image
+	 */
 	private void loadImageLevel(BufferedImage image) {
 		int w = image.getWidth();
 		int h = image.getHeight();
@@ -289,6 +337,9 @@ public class GamePanel extends Canvas implements Runnable {
 		}
 	}
 
+	/**
+	 * Load all the music needed for the game.
+	 */
 	public void loadMusic() {
 		try {
 			backMusic = AudioSystem.getClip();
@@ -301,6 +352,20 @@ public class GamePanel extends Canvas implements Runnable {
 			System.err.println("Error loading music file");
 		}
 	}
+
+	/**
+	 * Set the window size.
+	 * 
+	 * @param weight
+	 * @param height
+	 */
+	public void setPreferredSize(int weight, int height) {
+		setPreferredSize(new Dimension(weight, height));
+		setMaximumSize(new Dimension(weight, height));
+		setMinimumSize(new Dimension(weight, height));
+	}
+
+	// Getters and Setters
 
 	public int getWIDTH() {
 		return WIDTH;

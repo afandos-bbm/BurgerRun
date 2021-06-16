@@ -16,6 +16,12 @@ import javax.swing.JPanel;
 
 import alejandrofan2.burgerRun.framework.BufferedImageLoader;
 
+/**
+ * Contains the code of the game menu. A basic JPanel.
+ * 
+ * @author alejandrofan2
+ *
+ */
 public class GameMenu extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 6261175851689900695L;
@@ -36,6 +42,13 @@ public class GameMenu extends JFrame implements ActionListener {
 	private boolean win = false;
 	private boolean lose = false;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param height
+	 * @param width
+	 * @param title
+	 */
 	public GameMenu(int height, int width, String title) {
 		BufferedImageLoader loader = new BufferedImageLoader();
 		logo = loader.loadImage("/logo.jpg");
@@ -50,6 +63,16 @@ public class GameMenu extends JFrame implements ActionListener {
 		setResizable(true);
 		setVisible(true);
 
+		addComponets();
+		menuPanel.setLayout(null);
+
+		contentPane.add(menuPanel);
+	}
+
+	/**
+	 * Add and define menu buttons.
+	 */
+	private void addComponets() {
 		logoLabel.setBounds(new Rectangle(10, 5, 220, 110));
 		play.setAlignmentX(CENTER_ALIGNMENT);
 		play.setBounds(new Rectangle(5, 120, 230, 50));
@@ -71,9 +94,6 @@ public class GameMenu extends JFrame implements ActionListener {
 		menuPanel.add(lvlSelector);
 		menuPanel.add(exit);
 		menuPanel.add(nameLabel);
-		menuPanel.setLayout(null);
-
-		contentPane.add(menuPanel);
 	}
 
 	@Override
@@ -114,6 +134,8 @@ public class GameMenu extends JFrame implements ActionListener {
 			}
 		}
 	}
+
+	// Getters and Setters
 
 	public void setWin(boolean win) {
 		this.win = win;

@@ -12,6 +12,12 @@ import alejandrofan2.burgerRun.framework.ObjectId;
 import alejandrofan2.burgerRun.framework.textureManager.Texture;
 import alejandrofan2.burgerRun.window.GamePanel;
 
+/**
+ * Define the player and all his characteristics.
+ * 
+ * @author alejandrofan2
+ *
+ */
 public class Player extends GameObject {
 
 	private Handler handler;
@@ -24,6 +30,15 @@ public class Player extends GameObject {
 
 	private float gravity = 0.09f;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param id
+	 * @param handler
+	 * @param game
+	 */
 	public Player(float x, float y, ObjectId id, Handler handler, GamePanel game) {
 		super(x, y, id, game);
 		this.handler = handler;
@@ -63,6 +78,12 @@ public class Player extends GameObject {
 			g.drawImage(tex.playerTex[0], (int) x, (int) y, (int) width, (int) height, game);
 	}
 
+	/**
+	 * It is in charge of checking the collisions of the player with any type of
+	 * block.
+	 * 
+	 * @param objects
+	 */
 	private void collision(LinkedList<GameObject> objects) {
 		for (int i = 0; i < handler.objects.size(); i++) {
 			GameObject workingObject = handler.objects.get(i);
@@ -94,6 +115,7 @@ public class Player extends GameObject {
 				}
 			}
 
+			// Win Zone
 			if (workingObject.getId() == ObjectId.WinZone) {
 				if (getBounds().intersects(workingObject.getBounds())) {
 					game.setWin(true);
@@ -102,21 +124,38 @@ public class Player extends GameObject {
 		}
 	}
 
+	// The player consists of 4 bounding boxes instead of 1 for further optimization
+
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle((int) ((int) x + (width / 2) - (width / 2) / 2), (int) ((int) y + (height / 2)),
 				(int) width / 2, (int) height / 2);
 	}
 
+	/**
+	 * Set the top bounds for collision.
+	 * 
+	 * @return Rectangle
+	 */
 	public Rectangle getBoundsTop() {
 		return new Rectangle((int) ((int) x + (width / 2) - (width / 2) / 2), (int) y, (int) width / 2,
 				(int) height / 2);
 	}
 
+	/**
+	 * Set the right bounds for collision.
+	 * 
+	 * @return Rectangle
+	 */
 	public Rectangle getBoundsRight() {
 		return new Rectangle((int) ((int) x + width - 5), (int) y + 5, 5, (int) height - 10);
 	}
 
+	/**
+	 * Set the left bounds for collision.
+	 * 
+	 * @return Rectangle
+	 */
 	public Rectangle getBoundsLeft() {
 		return new Rectangle((int) x, (int) y + 5, 5, (int) height - 10);
 	}
